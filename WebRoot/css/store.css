@@ -1,0 +1,105 @@
+#product_menu{
+	float:left;
+	margin-top:5px;
+	width:200px;
+	height:510px;
+	border:1px solid #21ba5c;
+	overflow:hidden;
+	overflow-y:auto;
+}
+#product_menu .ptable_menu{
+	margin:0px;
+	padding:0px;
+	width:200px;
+	border:0px;
+	border-collapse: collapse;
+	overflow:hidden;
+	overflow-y:auto;
+}
+#product_menu .ptable_menu_title td{
+	height:50px;
+	font-size:16px;
+	font-weight:bold;
+	color:white;
+	background-color:#21ba5c;
+	text-align:center;
+}
+#product_menu .ptable_menu_text td{
+	line-height:50px;
+	color:#21ba5c;
+	font-size:14px;
+	font-weight:bold;
+	text-align:center;
+}
+
+#product_info{
+	float:left;
+	margin-top:5px;
+	margin-left:5px;
+	width:746px;
+	height:510px;
+	/* border:1px solid #21ba5c; */
+	overflow:hidden;
+	overflow-y:auto;
+}
+
+#product_info  .title{
+	line-height:50px;
+	width:736px;
+	margin-left:10px;
+	color:#A88D5A;
+	font-size:14px;
+	font-weight:bold;
+	overflow:hidden;
+}
+
+#product_info form{
+	width:736px;
+}
+
+#product_info .ptable{
+	width:720px;
+	margin-left:10px;
+	border-collapse: collapse;
+	border-radius: 8px;
+	cellpadding:0px;
+	cellspacing:0px;
+}
+
+#product_info  .ptable .head_text {
+	font-weight:bold;
+	background-color:#21ba5c;
+	color:white;
+} 
+
+#product_info .ptable td{
+	padding:5px;
+	height:25px;
+	border:1px solid #21ba5c;
+	border-width:1px 0px 1px 0px;
+	overflow:hidden;
+}
+
+#product_info .ptable .head_text td:first-child{
+	border-radius:8px 0px 0px 0px;
+	border-width:0px 1px 1px 0px;
+}
+
+#product_info .ptable .head_text td:last-child{
+	border-radius:0px 8px 0px 0px;
+	border-width:0px 1px 1px 1px;
+}
+
+#product_info .KEEdit td{
+	clear:both;
+	border: 0;
+	margin: 0;
+	padding: 2px 5px;
+}
+
+#product_info  .pages{
+	width:720px;
+	text-align:right;
+	margin-left:10px;
+}
+

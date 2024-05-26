@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.IOrdersDao">
+
+	<insert id="addOrders" parameterType="Orders">
+		<![CDATA[
+			insert into orders
+				values(null,#{user_id},#{film_id},#{orders_count},#{orders_date},#{orders_flag},#{orders_seat},#{film_scene})
+		]]>
+	</insert>
+
+	<delete id="delOrders" parameterType="int">
+		<![CDATA[
+			delete from orders where orders_id=#{orders_id}
+		]]>
+	</delete>
+
+	<delete id="delOrderss" parameterType="int">
+		<![CDATA[
+			delete from orders where orders_id in 
+		]]>
+		<foreach collection="array" item="orders_ids"  open="(" separator="," close=")">
+			#{orders_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateOrders" parameterType="Orders">
+		<![CDATA[
+			UPDATE orders
+		]]>
+		<set>
+			<if test="orders_flag!=0">
+			<![CDATA[
+				orders_flag = #{orders_flag}
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where orders_id = #{orders_id}
+		]]>
+	</update>
+	
+	<update id="updateOrdersFlag">
+		<![CDATA[
+			UPDATE orders o,film f
+			   SET orders_flag = 3
+			 WHERE o.film_id=f.film_id AND DATE_ADD(SYSDATE(),INTERVAL -1 day) > f.film_date AND orders_flag=1
+		]]>
+	</update>
+
+	<select id="getOrders" parameterType="Orders" resultType="Orders">
+		<![CDATA[
+			SELECT b.*,u.real_name,b2.film_name,b2.film_date,b2.film_room
+			  FROM orders b 
+			  left join user u on b.user_id=u.user_id 
+			  left join film b2 on b.film_id=b2.film_id
+		]]>
+		<where>
+			<if test="orders_id!=0">
+			<![CDATA[
+				orders_id = #{orders_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listOrderss" parameterType="Orders" resultType="Orders">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT b.*,u.real_name,b2.film_name,b2.film_date,b2.film_room 
+			  FROM orders b 
+			  left join user u on b.user_id=u.user_id 
+			  left join film b2 on b.film_id=b2.film_id
+		]]>
+		<where>
+			<if test="orders_id!=0">
+			<![CDATA[
+				orders_id = #{orders_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and b.user_id = #{user_id}
+			]]>
+			</if>
+			<if test="film_id!=0">
+			<![CDATA[
+				and b.film_id = #{film_id}
+			]]>
+			</if>
+			<if test="real_name!=null and real_name!=''">
+			<![CDATA[
+				and u.real_name like '%${real_name}%'
+			]]>
+			</if>
+			<if test="film_name!=null and film_name!=''">
+			<![CDATA[
+				and b2.film_name like '%${film_name}%'
+			]]>
+			</if>
+			<if test="orders_date_min!=null and orders_date_min!=''">
+			<![CDATA[
+				and b.orders_date >= str_to_date(#{orders_date_min},'%Y-%m-%d')
+			]]>
+			</if>
+			<if test="orders_date_max!=null and orders_date_max!=''">
+			<![CDATA[
+				and b.orders_date <= str_to_date(#{orders_date_max},'%Y-%m-%d')
+			]]>
+			</if>
+			<if test="orders_flag!=0">
+			<![CDATA[
+				and b.orders_flag = #{orders_flag}
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by orders_date desc,orders_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listOrderssCount" parameterType="Orders" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM orders b 
+			  left join user u on b.user_id=u.user_id 
+			  left join film b2 on b.film_id=b2.film_id
+		]]>
+		<where>
+			<if test="orders_id!=0">
+			<![CDATA[
+				orders_id = #{orders_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and b.user_id = #{user_id}
+			]]>
+			</if>
+			<if test="film_id!=0">
+			<![CDATA[
+				and b.film_id = #{film_id}
+			]]>
+			</if>
+			<if test="real_name!=null and real_name!=''">
+			<![CDATA[
+				and u.real_name like '%${real_name}%'
+			]]>
+			</if>
+			<if test="film_name!=null and film_name!=''">
+			<![CDATA[
+				and b2.film_name like '%${film_name}%'
+			]]>
+			</if>
+			<if test="orders_date_min!=null and orders_date_min!=''">
+			<![CDATA[
+				and b.orders_date >= str_to_date(#{orders_date_min},'%Y-%m-%d')
+			]]>
+			</if>
+			<if test="orders_date_max!=null and orders_date_max!=''">
+			<![CDATA[
+				and b.orders_date <= str_to_date(#{orders_date_max},'%Y-%m-%d')
+			]]>
+			</if>
+			<if test="orders_flag!=0">
+			<![CDATA[
+				and b.orders_flag = #{orders_flag}
+			]]>
+			</if>
+		</where>
+	</select>
+
+</mapper>

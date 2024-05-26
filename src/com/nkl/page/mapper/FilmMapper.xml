@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.IFilmDao">
+
+	<insert id="addFilm" parameterType="Film">
+		<![CDATA[
+			insert into film
+				values(null,#{film_name},#{film_pic},#{film_type_id},#{film_price},#{film_actors},#{film_date},#{film_scene},#{film_room},#{film_score},#{film_desc})
+		]]>
+	</insert>
+
+	<delete id="delFilm" parameterType="int">
+		<![CDATA[
+			delete from film where film_id=#{film_id}
+		]]>
+	</delete>
+
+	<delete id="delFilms" parameterType="int">
+		<![CDATA[
+			delete from film where film_id in 
+		]]>
+		<foreach collection="array" item="film_ids"  open="(" separator="," close=")">
+			#{film_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateFilm" parameterType="Film">
+		<![CDATA[
+			UPDATE film
+		]]>
+		<set>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				film_type_id = #{film_type_id},
+			]]>
+			</if>
+			<if test="film_name!=null and film_name!=''">
+			<![CDATA[
+				film_name = #{film_name},
+			]]>
+			</if>
+			<if test="film_pic!=null and film_pic!=''">
+			<![CDATA[
+				film_pic = #{film_pic},
+			]]>
+			</if>
+			<if test="film_price!=0">
+			<![CDATA[
+				film_price = #{film_price},
+			]]>
+			</if>
+			<if test="film_actors!=null and film_actors!=''">
+			<![CDATA[
+				film_actors = #{film_actors},
+			]]>
+			</if>
+			<if test="film_date!=null and film_date!=''">
+			<![CDATA[
+				film_date = #{film_date},
+			]]>
+			</if>
+			<if test="film_scene!=null and film_scene!=''">
+			<![CDATA[
+				film_scene = #{film_scene},
+			]]>
+			</if>
+			<if test="film_room!=null and film_room!=''">
+			<![CDATA[
+				film_room = #{film_room},
+			]]>
+			</if>
+			<if test="film_desc!=null and film_desc!=''">
+			<![CDATA[
+				film_desc = #{film_desc},
+			]]>
+			</if>
+			<if test="film_score!=0">
+			<![CDATA[
+				film_score = #{film_score}
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where film_id = #{film_id}
+		]]>
+	</update>
+	
+	<update id="updateFilmScore" parameterType="Film">
+		<![CDATA[
+			update film f,
+			 (select s.film_id,AVG(s.sblog_score) film_score from sblog s group by s.film_id) t
+			  set f.film_score=round(IFNULL(t.film_score,0),2) 
+			where f.film_id = t.film_id
+		]]>
+		<if test="film_id!=0">
+		<![CDATA[
+			and f.film_id = #{film_id}
+		]]>
+		</if>
+	</update>
+
+	<select id="getFilm" parameterType="Film" resultType="Film">
+		<![CDATA[
+			SELECT b.*,bt.film_type_name FROM film b left join film_type bt on b.film_type_id=bt.film_type_id
+		]]>
+		<where>
+			<if test="film_id!=0">
+			<![CDATA[
+				b.film_id = #{film_id}
+			]]>
+			</if>
+			<if test="film_date!=null and film_date!=''">
+			<![CDATA[
+				and film_date = #{film_date}
+			]]>
+			</if>
+			<if test="film_scene!=null and film_scene!=''">
+			<![CDATA[
+				and film_scene like '%${film_scene}%'
+			]]>
+			</if>
+			<if test="film_room!=null and film_room!=''">
+			<![CDATA[
+				and film_room = #{film_room}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listFilms" parameterType="Film" resultType="Film">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT b.*,bt.film_type_name FROM film b left join film_type bt on b.film_type_id=bt.film_type_id where film_date <= DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+		]]>
+		<where>
+			<if test="film_id!=0">
+			<![CDATA[
+				film_id = #{film_id}
+			]]>
+			</if>
+			<if test="film_name!=null and film_name!=''">
+			<![CDATA[
+				and film_name like '%${film_name}%'
+			]]>
+			</if>
+			<if test="film_actors!=null and film_actors!=''">
+			<![CDATA[
+				and film_actors like '%${film_actors}%'
+			]]>
+			</if>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				and b.film_type_id = #{film_type_id}
+			]]>
+			</if>
+			<if test="film_date!=null and film_date!=''">
+			<![CDATA[
+				and film_date = #{film_date}
+			]]>
+			</if>
+			<if test="film_scene!=null and film_scene!=''">
+			<![CDATA[
+				and film_scene like '%${film_scene}%'
+			]]>
+			</if>
+			<if test="film_room!=null and film_room!=''">
+			<![CDATA[
+				and film_room = #{film_room}
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by film_date desc,film_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listFilmsCount" parameterType="Film" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM film b left join film_type bt on b.film_type_id=bt.film_type_id where film_date <= DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+		]]>
+		<where>
+			<if test="film_id!=0">
+			<![CDATA[
+				film_id = #{film_id}
+			]]>
+			</if>
+			<if test="film_name!=null and film_name!=''">
+			<![CDATA[
+				and film_name like '%${film_name}%'
+			]]>
+			</if>
+			<if test="film_actors!=null and film_actors!=''">
+			<![CDATA[
+				and film_actors like '%${film_actors}%'
+			]]>
+			</if>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				and b.film_type_id = #{film_type_id}
+			]]>
+			</if>
+			<if test="film_date!=null and film_date!=''">
+			<![CDATA[
+				and film_date = #{film_date}
+			]]>
+			</if>
+			<if test="film_scene!=null and film_scene!=''">
+			<![CDATA[
+				and film_scene like '%${film_scene}%'
+			]]>
+			</if>
+			<if test="film_room!=null and film_room!=''">
+			<![CDATA[
+				and film_room = #{film_room}
+			]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="listFilmsTop" resultType="Film">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT b.*,bt.film_type_name FROM film b left join film_type bt on b.film_type_id=bt.film_type_id
+			where film_date = DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+		]]>
+		<![CDATA[
+			order by film_date desc) t
+			limit 0,10
+		]]>
+	</select>
+
+</mapper>

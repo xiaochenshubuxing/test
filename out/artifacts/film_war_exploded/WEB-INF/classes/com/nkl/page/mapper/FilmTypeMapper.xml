@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.IFilmTypeDao">
+
+	<insert id="addFilmType" parameterType="FilmType">
+		<![CDATA[
+			insert into film_type
+				values(null,#{film_type_name})
+		]]>
+	</insert>
+
+	<delete id="delFilmType" parameterType="int">
+		<![CDATA[
+			delete from film_type where film_type_id=#{film_type_id}
+		]]>
+	</delete>
+
+	<delete id="delFilmTypes" parameterType="int">
+		<![CDATA[
+			delete from film_type where film_type_id in 
+		]]>
+		<foreach collection="array" item="film_type_ids"  open="(" separator="," close=")">
+			#{film_type_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateFilmType" parameterType="FilmType">
+		<![CDATA[
+			UPDATE film_type
+		]]>
+		<set>
+			<if test="film_type_name!=null and film_type_name!=''">
+			<![CDATA[
+				film_type_name = #{film_type_name}
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where film_type_id = #{film_type_id}
+		]]>
+	</update>
+
+	<select id="getFilmType" parameterType="FilmType" resultType="FilmType">
+		<![CDATA[
+			SELECT * FROM film_type
+		]]>
+		<where>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				film_type_id = #{film_type_id}
+			]]>
+			</if>
+			<if test="film_type_name!=null and film_type_name!=''">
+			<![CDATA[
+				and film_type_name = #{film_type_name}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listFilmTypes" parameterType="FilmType" resultType="FilmType">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT * FROM film_type
+		]]>
+		<where>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				film_type_id = #{film_type_id}
+			]]>
+			</if>
+			<if test="film_type_name!=null and film_type_name!=''">
+			<![CDATA[
+				and film_type_name like '%${film_type_name}%'
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by film_type_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listFilmTypesCount" parameterType="FilmType" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM film_type
+		]]>
+		<where>
+			<if test="film_type_id!=0">
+			<![CDATA[
+				film_type_id = #{film_type_id}
+			]]>
+			</if>
+			<if test="film_type_name!=null and film_type_name!=''">
+			<![CDATA[
+				and film_type_name like '%${film_type_name}%'
+			]]>
+			</if>
+		</where>
+	</select>
+
+</mapper>
